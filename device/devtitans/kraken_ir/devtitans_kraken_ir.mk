@@ -6,3 +6,6 @@ PRODUCT_NAME := devtitans_kraken_ir
 PRODUCT_DEVICE := kraken_ir
 PRODUCT_BRAND := KrakenIrBrand
 PRODUCT_MODEL := KrakenIrModel
+
+PRODUCT_PACKAGES += \
+	logging_test
