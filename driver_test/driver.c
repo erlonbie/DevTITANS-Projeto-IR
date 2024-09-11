@@ -12,7 +12,7 @@ MODULE_LICENSE("GPL");
 #define PRODUCT_ID  0xea60
 
 static char recv_line[MAX_RECV_LINE];  // Stores USB response until end of line
-static struct infrared_device *device;  // USB device reference
+static struct usb_device *infrared_device;  // USB device reference
 static uint usb_in, usb_out;  // USB I/O ports address.
 static char *usb_in_buffer, *usb_out_buffer;  // USB I/O Buffer
 static int usb_max_size;  // Max USB message size
@@ -23,13 +23,14 @@ static int  usb_probe(struct usb_interface *ifce, const struct usb_device_id *id
 static void usb_disconnect(struct usb_interface *ifce);  // Execs when device disconnects from USB
 static int  usb_read_serial(void);
 
-// Execs when /sys/kernel/infrared/freq is read (e.g., cat /sys/kernel/infrared/freq)
+// Execs when /sys/kernel/infrared/{freq,data} is read (e.g., cat /sys/kernel/infrared/freq)
 static ssize_t attr_show(struct kobject *sys_obj, struct kobj_attribute *attr, char *buff);
-// Execs when /sys/kernel/infrared/freq is written (e.g., echo "100" | sudo tee -a /sys/kernel/infrared/freq)
+// Execs when /sys/kernel/infrared/{freq, data} is written (e.g., echo "100" | sudo tee -a /sys/kernel/infrared/freq)
 static ssize_t attr_store(struct kobject *sys_obj, struct kobj_attribute *attr, const char *buff, size_t count);   
 // Var to create /sys/kernel/infrared/freq
-static struct kobj_attribute  freq_attribute = __ATTR(led, S_IRUGO | S_IWUSR, attr_show, attr_store);
-static struct attribute      *attrs[]       = { &freq_attribute.attr, NULL };
+static struct kobj_attribute  freq_attribute = __ATTR(freq, S_IRUGO | S_IWUSR, attr_show, attr_store);
+static struct kobj_attribute  data_attribute = __ATTR(data, S_IRUGO | S_IWUSR, attr_show, attr_store);
+static struct attribute      *attrs[]       = { &freq_attribute.attr, &data_attribute.attr, NULL };
 static struct attribute_group attr_group    = { .attrs = attrs };
 static struct kobject        *sys_obj;
 
@@ -117,14 +118,14 @@ static int usb_send_cmd(char *cmd, int param) {
             continue;
         }
 
-        char *start = strstr(usb_in_buffer, "RES_FREQ "); // Returns first ocurrence of "RES_FREQ " in usb_in_buffer string
+        char *start = strstr(usb_in_buffer, "RES "); // Returns first ocurrence of "RES_FREQ " in usb_in_buffer string
         if (!start) {
             printk(KERN_ERR "[InfraRed] Invalid message\n");
             continue;
         }
 
         // Gets value after RES_FREQ
-        start += strlen("RES_FREQ "); // Moves pointer to value position
+        start += strlen("RES "); // Moves pointer to value position
         int value = atoi(start);
 
         return value;
