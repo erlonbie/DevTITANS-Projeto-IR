@@ -3,161 +3,163 @@
 #include <linux/slab.h>
 
 MODULE_AUTHOR("DevTITANS <devtitans@icomp.ufam.edu.br>");
-MODULE_DESCRIPTION("Driver de acesso ao SmartLamp (ESP32 com Chip Serial CP2102");
+MODULE_DESCRIPTION("Driver for DevTitans IR Project (ESP32 Serial CP2102");
 MODULE_LICENSE("GPL");
 
 
-#define MAX_RECV_LINE 100 // Tamanho máximo de uma linha de resposta do dispositvo USB
+#define MAX_RECV_LINE 100  // Max response length
 #define VENDOR_ID   0x10c4
 #define PRODUCT_ID  0xea60
 
-static char recv_line[MAX_RECV_LINE];              // Armazena dados vindos da USB até receber um caractere de nova linha '\n'
-static struct usb_device *smartlamp_device;        // Referência para o dispositivo USB
-static uint usb_in, usb_out;                       // Endereços das portas de entrada e saida da USB
-static char *usb_in_buffer, *usb_out_buffer;       // Buffers de entrada e saída da USB
-static int usb_max_size;                           // Tamanho máximo de uma mensagem USB
+static char recv_line[MAX_RECV_LINE];  // Stores USB response until end of line
+static struct infrared_device *device;  // USB device reference
+static uint usb_in, usb_out;  // USB I/O ports address.
+static char *usb_in_buffer, *usb_out_buffer;  // USB I/O Buffer
+static int usb_max_size;  // Max USB message size
 
 static const struct usb_device_id id_table[] = { { USB_DEVICE(VENDOR_ID, PRODUCT_ID) }, {} };
 
-static int  usb_probe(struct usb_interface *ifce, const struct usb_device_id *id); // Executado quando o dispositivo é conectado na USB
-static void usb_disconnect(struct usb_interface *ifce);                           // Executado quando o dispositivo USB é desconectado da USB
-static int  usb_read_serial(void);   
+static int  usb_probe(struct usb_interface *ifce, const struct usb_device_id *id);  // Execs when device connects to USB
+static void usb_disconnect(struct usb_interface *ifce);  // Execs when device disconnects from USB
+static int  usb_read_serial(void);
 
-// Executado quando o arquivo /sys/kernel/smartlamp/{led, ldr} é lido (e.g., cat /sys/kernel/smartlamp/led)
+// Execs when /sys/kernel/infrared/freq is read (e.g., cat /sys/kernel/infrared/freq)
 static ssize_t attr_show(struct kobject *sys_obj, struct kobj_attribute *attr, char *buff);
-// Executado quando o arquivo /sys/kernel/smartlamp/{led, ldr} é escrito (e.g., echo "100" | sudo tee -a /sys/kernel/smartlamp/led)
+// Execs when /sys/kernel/infrared/freq is written (e.g., echo "100" | sudo tee -a /sys/kernel/infrared/freq)
 static ssize_t attr_store(struct kobject *sys_obj, struct kobj_attribute *attr, const char *buff, size_t count);   
-// Variáveis para criar os arquivos no /sys/kernel/smartlamp/{led, ldr}
-static struct kobj_attribute  led_attribute = __ATTR(led, S_IRUGO | S_IWUSR, attr_show, attr_store);
-static struct kobj_attribute  ldr_attribute = __ATTR(ldr, S_IRUGO | S_IWUSR, attr_show, attr_store);
-static struct attribute      *attrs[]       = { &led_attribute.attr, &ldr_attribute.attr, NULL };
+// Var to create /sys/kernel/infrared/freq
+static struct kobj_attribute  freq_attribute = __ATTR(led, S_IRUGO | S_IWUSR, attr_show, attr_store);
+static struct attribute      *attrs[]       = { &freq_attribute.attr, NULL };
 static struct attribute_group attr_group    = { .attrs = attrs };
-static struct kobject        *sys_obj;                                             // Executado para ler a saida da porta serial
+static struct kobject        *sys_obj;
 
 MODULE_DEVICE_TABLE(usb, id_table);
 
 bool ignore = true;
-int LDR_value = 0;
+int freq_value = 0;
 
-static struct usb_driver smartlamp_driver = {
-    .name        = "smartlamp",     // Nome do driver
-    .probe       = usb_probe,       // Executado quando o dispositivo é conectado na USB
-    .disconnect  = usb_disconnect,  // Executado quando o dispositivo é desconectado na USB
-    .id_table    = id_table,        // Tabela com o VendorID e ProductID do dispositivo
+
+static struct usb_driver infrared_driver = {
+    .name        = "infrared",
+    .probe       = usb_probe,
+    .disconnect  = usb_disconnect,
+    .id_table    = id_table,  // VendorID ProductID table
 };
 
-module_usb_driver(smartlamp_driver);
 
-// Executado quando o dispositivo é conectado na USB
+module_usb_driver(device_driver);
+
+
+// Execs when device connects to USB
 static int usb_probe(struct usb_interface *interface, const struct usb_device_id *id) {
     struct usb_endpoint_descriptor *usb_endpoint_in, *usb_endpoint_out;
+    printk(KERN_INFO "[InfraRed] Device connected. ...\n");
 
-    printk(KERN_INFO "SmartLamp: Dispositivo conectado ...\n");
-
-    // Cria arquivos do /sys/kernel/smartlamp/*
-    sys_obj = kobject_create_and_add("smartlamp", kernel_kobj);
+    // Creates /sys/kernel/infrared/freq file
+    sys_obj = kobject_create_and_add("infrared", kernel_kobj);
     ignore = sysfs_create_group(sys_obj, &attr_group); // AQUI
 
-    // Detecta portas e aloca buffers de entrada e saída de dados na USB
-    smartlamp_device = interface_to_usbdev(interface);
-    ignore =  usb_find_common_endpoints(interface->cur_altsetting, &usb_endpoint_in, &usb_endpoint_out, NULL, NULL);  // AQUI
+    // Detects ports and initiate USB I/O buffers
+    infrared_device = interface_to_usbdev(interface);
+    ignore =  usb_find_common_endpoints(interface->cur_altsetting, &usb_endpoint_in, &usb_endpoint_out, NULL, NULL);
     usb_max_size = usb_endpoint_maxp(usb_endpoint_in);
     usb_in = usb_endpoint_in->bEndpointAddress;
     usb_out = usb_endpoint_out->bEndpointAddress;
     usb_in_buffer = kmalloc(usb_max_size, GFP_KERNEL);
     usb_out_buffer = kmalloc(usb_max_size, GFP_KERNEL);
 
-    LDR_value = usb_read_serial();
+    freq_value = usb_read_serial();
 
-    printk("LDR Value: %d\n", LDR_value);
-
+    printk("InfraRed Frequency Value: %d\n", freq_value);
     return 0;
 }
 
-// Executado quando o dispositivo USB é desconectado da USB
+
+// Execs when device disconnects from USB
 static void usb_disconnect(struct usb_interface *interface) {
-    printk(KERN_INFO "SmartLamp: Dispositivo desconectado.\n");
+    printk(KERN_INFO "[InfraRed] Device disconnected\n");
     if (sys_obj) kobject_put(sys_obj);      // Remove os arquivos em /sys/kernel/smartlamp
     kfree(usb_in_buffer);                   // Desaloca buffers
     kfree(usb_out_buffer);
 }
 
-// Envia um comando via USB, espera e retorna a resposta do dispositivo (convertido para int)
-// Exemplo de Comando:  SET_LED 80
-// Exemplo de Resposta: RES SET_LED 1
-// Exemplo de chamada da função usb_send_cmd para SET_LED: usb_send_cmd("SET_LED", 80);
+
+// Sends USB command, awaits and returns response
+// Command example:  SET_FREQ 455
+// Response example: RES SET_FREQ 1
+// Function call example for usb_send_cmd with command SET_FREQ: usb_send_cmd("SET_FREQ", 455);
 static int usb_send_cmd(char *cmd, int param) {
-    int recv_size = 0;                      // Quantidade de caracteres no recv_line
+    int recv_size = 0;                      // Char length in recv_line
     int ret, actual_size, i;
-    int retries = 10;                       // Tenta algumas vezes receber uma resposta da USB. Depois desiste.
-    char resp_expected[MAX_RECV_LINE];      // Resposta esperada do comando
-    char *resp_pos;                         // Posição na linha lida que contém o número retornado pelo dispositivo
-    long resp_number = -1;                  // Número retornado pelo dispositivo (e.g., valor do led, valor do ldr)
+    int retries = 10;                       // Max tries for sending command
+    char resp_expected[MAX_RECV_LINE];      // Expected response for given command
+    char *resp_pos;                         // Response value index in response line
+    long resp_number = -1;                  // Frequency value returned by device
 
-    printk(KERN_INFO "SmartLamp: Enviando comando: %s\n", cmd);
+    printk(KERN_INFO "[InfraRed] Command sent: %s\n", cmd);
 
-    // preencha o buffer                     // Caso contrário, é só o comando mesmo
 
-    // Envia o comando (usb_out_buffer) para a USB
-    // Procure a documentação da função usb_bulk_msg para entender os parâmetros
-    ret = usb_bulk_msg(smartlamp_device, usb_sndbulkpipe(smartlamp_device, usb_out), BUFFER, ?, &actual_size, 1000);
+    // Sends command (usb_out_buffer) to USB
+    ret = usb_bulk_msg(infrared_device, usb_sndbulkpipe(infrared_device, usb_out), BUFFER, ?, &actual_size, 1000);
     if (ret) {
-        printk(KERN_ERR "SmartLamp: Erro de codigo %d ao enviar comando!\n", ret);
+        printk(KERN_ERR "[InfraRed] Error while sending command. Exit code: %d\n", ret);
         return -1;
     }
 
-    sprintf(resp_expected, "RES %s", cmd);  // Resposta esperada. Ficará lendo linhas até receber essa resposta.
+    sprintf(resp_expected, "RES %s", cmd);  // Expected response format. Keeps reading until expected response is received
 
-    // Espera pela resposta correta do dispositivo (desiste depois de várias tentativas)
+    // Awaits for correct response (Gives up after <retries variable> times)
     while (retries > 0) {
-        // Lê dados da USB
-        ret = usb_bulk_msg(smartlamp_device, usb_rcvbulkpipe(smartlamp_device, usb_in), usb_in_buffer, min(usb_max_size, MAX_RECV_LINE), &actual_size, 1000);
+        // Read data from USB
+        ret = usb_bulk_msg(infrared_device, usb_rcvbulkpipe(infrared_device, usb_in), usb_in_buffer, min(usb_max_size, MAX_RECV_LINE), &actual_size, 1000);
         if (ret) {
-            printk(KERN_ERR "SmartLamp: Erro ao ler dados da USB (tentativa %d). Codigo: %d\n", ret, retries--);
+            printk(KERN_ERR "[InfraRed] Error while reading from USB (attempt %d). Exit code: %d\n", ret, retries--);
             continue;
         }
 
-        // adicione a sua implementação do médodo usb_read_serial
+        char *start = strstr(usb_in_buffer, "RES_FREQ "); // Returns first ocurrence of "RES_FREQ " in usb_in_buffer string
+        if (!start) {
+            printk(KERN_ERR "[InfraRed] Invalid message\n");
+            continue;
+        }
+
+        // Gets value after RES_FREQ
+        start += strlen("RES_FREQ "); // Moves pointer to value position
+        int value = atoi(start);
+
+        return value;
     }
-    return -1; // Não recebi a resposta esperada do dispositivo
+    return -1; // Unexpected response
 }
 
-// Executado quando o arquivo /sys/kernel/smartlamp/{led, ldr} é lido (e.g., cat /sys/kernel/smartlamp/led)
+
 static ssize_t attr_show(struct kobject *sys_obj, struct kobj_attribute *attr, char *buff) {
-    // value representa o valor do led ou ldr
-    int value;
-    // attr_name representa o nome do arquivo que está sendo lido (ldr ou led)
-    const char *attr_name = attr->attr.name;
+    int value;  // Represents infrared frequency value
+    const char *attr_name = attr->attr.name;  // attr_name represents file name
 
-    // printk indicando qual arquivo está sendo lido
-    printk(KERN_INFO "SmartLamp: Lendo %s ...\n", attr_name);
+    // Indicates which file is being read
+    printk(KERN_INFO "[InfraRed] Reading from %s file\n", attr_name);
 
-    // Implemente a leitura do valor do led ou ldr usando a função usb_send_cmd()
-
-    sprintf(buff, "%d\n", value);                   // Cria a mensagem com o valor do led, ldr
+    sprintf(buff, "%d\n", value);  // Creates message with frequency value
     return strlen(buff);
 }
 
 
-// Essa função não deve ser alterada durante a task sysfs
-// Executado quando o arquivo /sys/kernel/smartlamp/{led, ldr} é escrito (e.g., echo "100" | sudo tee -a /sys/kernel/smartlamp/led)
 static ssize_t attr_store(struct kobject *sys_obj, struct kobj_attribute *attr, const char *buff, size_t count) {
     long ret, value;
     const char *attr_name = attr->attr.name;
 
-    // Converte o valor recebido para long
+    // Converts value to long int
     ret = kstrtol(buff, 10, &value);
     if (ret) {
-        printk(KERN_ALERT "SmartLamp: valor de %s invalido.\n", attr_name);
+        printk(KERN_ALERT "[InfraRed] Value %s is invalid\n", attr_name);
         return -EACCES;
     }
 
-    printk(KERN_INFO "SmartLamp: Setando %s para %ld ...\n", attr_name, value);
-
-    // utilize a função usb_send_cmd para enviar o comando SET_LED X
+    printk(KERN_INFO "[InfraRed] Writing %s with %ld ...\n", attr_name, value);
 
     if (ret < 0) {
-        printk(KERN_ALERT "SmartLamp: erro ao setar o valor do %s.\n", attr_name);
+        printk(KERN_ALERT "[InfraRed] Error while writing to %s.\n", attr_name);
         return -EACCES;
     }
 
