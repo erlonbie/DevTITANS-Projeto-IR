@@ -13,6 +13,9 @@
         android:theme="@style/Theme.IRApp"
         tools:targetApi="31">
         <activity
+            android:name=".AddIRCommand"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
