@@ -4,7 +4,7 @@ using namespace std; // Permite usar string diretamente ao invés de std::string
 using namespace android::base; // Permite usar GetBoolProperty ao invés de
                                // android::base::GetBoolProperty
 
-namespace devtitans::smartir { // Pacote SmartIr
+namespace devtitans::smartir { // Pacote semartir
 
 int SmartIr::connect() {
   char dirPath[] = "/sys/kernel/smart_ir";
