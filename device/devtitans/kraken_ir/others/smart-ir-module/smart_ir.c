@@ -144,17 +144,18 @@ static int usb_send_cmd(char *cmd, int param) {
 
 // Execs when /sys/kernel/smart_ir/{ir_transmit, ir_receive} is read (e.g., cat /sys/kernel/smart_ir/ir_transmit)
 static ssize_t attr_show(struct kobject *sys_obj, struct kobj_attribute *attr, char *buff) {
-    int value;
+    int value = 0;
     const char *attr_name = attr->attr.name;
 
     printk(KERN_INFO "[SmartIR] Reading %s ...\n", attr_name);
 
     if (!strcmp(attr_name, "ir_transmit"))
         value = usb_send_cmd("GET_IR_TRANSMIT", -1);
-    else (!strcmp(attr_name, "ir_receive"))
+    else if (!strcmp(attr_name, "ir_receive"))
         value = usb_send_cmd("GET_IR_RECEIVE", -1);
-    else
+    else {
         printk(KERN_ALERT "[SmartIR] The only readable attributes are 'ir_transmit' and 'ir_receive'\n");
+    }
 
     sprintf(buff, "%d\n", value);  // Creates message with ir_transmit or ir_receive values
     return strlen(buff);
