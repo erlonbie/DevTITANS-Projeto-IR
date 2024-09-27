@@ -8,4 +8,6 @@ PRODUCT_BRAND := KrakenIrBrand
 PRODUCT_MODEL := KrakenIrModel
 
 PRODUCT_PACKAGES += \
-	logging_test
+	logging_test \
+	smart_ir_lib \
+	smart_ir_client
