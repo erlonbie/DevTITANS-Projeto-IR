@@ -51,7 +51,7 @@ void SmartIrClient::start(int argc, char **argv) {
 using namespace devtitans::smartir; // Permite usar HelloCpp diretamente ao invés de devtitans::hello::HelloCpp
 
 int main(int argc, char **argv) {
-    SmartIr client;               // Variável hello, da classe HelloCpp, do pacote devtitans::hello
+    SmartIrClient client;               // Variável hello, da classe HelloCpp, do pacote devtitans::hello
     client.start(argc, argv);             // Executa o método printHello
     return 0;
 }
