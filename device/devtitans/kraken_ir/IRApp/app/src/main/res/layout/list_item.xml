@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="8dp"
     android:background="@color/white"
-    app:cardCornerRadius="8dp"
-    android:elevation="8dp">
+    android:elevation="8dp"
+    app:cardCornerRadius="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,25 +37,29 @@
 
         </RelativeLayout>
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_send_command"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_gravity="center"
-            />
+            android:background="@android:color/black"
+            android:contentDescription="Send Command"
+            android:scaleType="fitCenter"
+            android:rotation="270"
+            android:src="@drawable/infrared_icon" />
 
         <TextView
             android:id="@+id/tv_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
             android:maxLines="10"
             android:padding="8dp"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
             android:text="Date"
-            android:textColor="@color/grey"
+            android:textColor="@color/black"
             android:textSize="14sp"
             android:textStyle="normal">
 

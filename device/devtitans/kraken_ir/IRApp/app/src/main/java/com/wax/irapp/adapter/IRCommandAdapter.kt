@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.wax.irapp.R
@@ -17,16 +19,13 @@ class IRCommandAdapter(private val context: Context, val listener : IRCommandCli
     private val irCommandList = ArrayList<IRCommand>()
     private val fullList = ArrayList<IRCommand>()
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): IRCommandViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup,viewType: Int): IRCommandViewHolder {
         return IRCommandViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
+            LayoutInflater.from(context).inflate(R.layout.list_item, parent, false)
         )
     }
 
-    override fun onBindViewHolder(holder: IRCommandAdapter.IRCommandViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: IRCommandViewHolder, position: Int) {
 
         val currentIRCommand = irCommandList[position]
         holder.title.text = currentIRCommand.title
@@ -44,6 +43,11 @@ class IRCommandAdapter(private val context: Context, val listener : IRCommandCli
         holder.irCommandLayout.setOnLongClickListener{
             listener.onLongItemClicked(irCommandList[holder.adapterPosition],holder.irCommandLayout)
             true
+        }
+
+        holder.button.setOnClickListener {
+
+            Toast.makeText(context, "${currentIRCommand.title} Enviado com Sucesso", Toast.LENGTH_SHORT).show()
         }
 
     }
@@ -78,9 +82,8 @@ class IRCommandAdapter(private val context: Context, val listener : IRCommandCli
     class IRCommandViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val irCommandLayout = itemView.findViewById<CardView>(R.id.card_layout)
         val title = itemView.findViewById<TextView>(R.id.tv_title)
-        val button = itemView.findViewById<Button>(R.id.btn_send_command)
+        val button = itemView.findViewById<ImageButton>(R.id.btn_send_command)
         val date = itemView.findViewById<TextView>(R.id.tv_date)
-
     }
 
     interface IRCommandClickListener{

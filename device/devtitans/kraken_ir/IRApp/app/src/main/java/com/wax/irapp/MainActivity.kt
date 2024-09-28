@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), IRCommandAdapter.IRCommandClickListene
 
     private val updateIRCommand = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){result ->
         if (result.resultCode == Activity.RESULT_OK){
-            val irCommand = result.data?.getSerializableExtra("note") as? IRCommand
+            val irCommand = result.data?.getSerializableExtra("command") as? IRCommand
             if (irCommand!= null){
 
                 viewModel.updateCommand(irCommand)
@@ -47,25 +47,27 @@ class MainActivity : AppCompatActivity(), IRCommandAdapter.IRCommandClickListene
         viewModel = ViewModelProvider(this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)).get(IRCommandViewModel::class.java)
 
-        viewModel.commandsTest.observe(this) { list ->
+        viewModel.allCommands.observe(this) { list ->
             list?.let {
                 adapter.updateList(list)
             }
         }
 
         database = IRCommandDatabase.getDatabase(this)
+
+        //viewModel.insertCommand(IRCommand(1, "Command 1", "Code 1", ""))
     }
 
     private fun initUI() {
         binding.recyclerView.setHasFixedSize(true)
-        binding.recyclerView.layoutManager = StaggeredGridLayoutManager(2, LinearLayout.VERTICAL)
+        binding.recyclerView.layoutManager = StaggeredGridLayoutManager(3, LinearLayout.VERTICAL)
         adapter = IRCommandAdapter(this,this)
         binding.recyclerView.adapter = adapter
 
         val getContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
             if (result.resultCode == Activity.RESULT_OK){
 
-                val irCommand = result.data?.getSerializableExtra("irCommand") as? IRCommand
+                val irCommand = result.data?.getSerializableExtra("command") as? IRCommand
                 if (irCommand != null){
                     viewModel.insertCommand(irCommand)
                 }
@@ -73,7 +75,7 @@ class MainActivity : AppCompatActivity(), IRCommandAdapter.IRCommandClickListene
         }
 
         binding.fbAddNote.setOnClickListener {
-            val intent = Intent(this, AddIRCommand::class.java)
+            val intent = Intent(this, AddIRCommandActivity::class.java)
             getContent.launch(intent)
         }
 
@@ -93,8 +95,8 @@ class MainActivity : AppCompatActivity(), IRCommandAdapter.IRCommandClickListene
     }
 
     override fun onItemClicked(irCommand: IRCommand) {
-        val intent = Intent(this@MainActivity, AddIRCommand::class.java)
-        intent.putExtra("current_note", irCommand)
+        val intent = Intent(this@MainActivity, AddIRCommandActivity::class.java)
+        intent.putExtra("current_command", irCommand)
         updateIRCommand.launch(intent)
 
     }
