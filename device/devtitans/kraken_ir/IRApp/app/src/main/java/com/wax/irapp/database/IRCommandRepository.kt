@@ -7,8 +7,6 @@ class IRCommandRepository(private val irCommandDAO: IRCommandDAO) {
 
     val allCommands: LiveData<List<IRCommand>> = irCommandDAO.getAllNotes()
 
-
-
     suspend fun insert(irCommand: IRCommand) {
         irCommandDAO.insert(irCommand)
     }
