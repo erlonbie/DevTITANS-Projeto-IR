@@ -1,0 +1,4 @@
+# Define o rótulo do daemon birthday_server
+/vendor/bin/birthday_server           u:object_r:birthday_server_exec:s0
+# Linha em branco para evitar erro de compilação
+        

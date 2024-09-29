@@ -1,0 +1,4 @@
+# Define o rótulo do serviço AIDL birthdayservices
+com.example.birthdayservice.IBirthdayService u:object_r:birthdayservice:s0
+# Linha em branco para evitar erro de compilação
+        

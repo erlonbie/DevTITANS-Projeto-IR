@@ -1,0 +1,22 @@
+rust_library {
+    name: "libbirthdayservice",
+    srcs: ["src/lib.rs"],
+    crate_name: "birthdayservice",
+    rustlibs: [
+        "com.example.birthdayservice-rust",
+        "libbinder_rs",
+    ],
+}
+
+rust_binary {
+    name: "birthday_server",
+    crate_name: "birthday_server",
+    srcs: ["src/server.rs"],
+    rustlibs: [
+        "com.example.birthdayservice-rust",
+        "libbinder_rs",
+        "libbirthdayservice",
+    ],
+    init_rc: ["src/server.rc"],
+    prefer_rlib: true, // To avoid dynamic link error.
+}
