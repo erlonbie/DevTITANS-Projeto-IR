@@ -1,0 +1,9 @@
+cc_binary {
+    name:         "smart_ir_client",
+    srcs:         [ "smart_ir_client.cpp" ],
+
+    shared_libs:  [ "smart_ir_lib" ],
+    required:     [ "smart_ir_lib" ],
+
+    vendor: true,
+}
