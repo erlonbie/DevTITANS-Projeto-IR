@@ -1,0 +1,10 @@
+rust_binary {
+    name: "logging_test",
+    crate_name: "logging_test",
+    srcs: ["src/main.rs"],
+    rustlibs: [
+        "liblogger",
+        "liblog_rust",
+    ],
+    host_supported: true,
+}
