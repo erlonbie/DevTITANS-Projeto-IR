@@ -1,5 +1,6 @@
 .repo/
 .vscode/
+Android.bp
 BUILD
 WORKSPACE
 art/
