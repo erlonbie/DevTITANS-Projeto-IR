@@ -10,4 +10,8 @@ PRODUCT_MODEL := KrakenIrModel
 PRODUCT_PACKAGES += \
 	logging_test \
 	smart_ir_lib \
-	smart_ir_client
+	smart_ir_client \
+	libbirthdayservice \
+	birthday_server
+
+BOARD_SEPOLICY_DIRS += device/devtitans/kraken_ir/sepolicy

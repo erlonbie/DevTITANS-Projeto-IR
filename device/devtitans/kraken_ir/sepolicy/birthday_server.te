@@ -1,0 +1,31 @@
+# Cria o tipo/rótulo do serviço AIDL (rotulado no arquivo service_contexts)
+type birthdayservice, service_manager_type;
+
+# Cria o tipo/rótulo do daemon (rotulado no arquivo file_contexts)
+type birthday_server, domain;
+type birthday_server_exec, vendor_file_type, exec_type, file_type;
+
+# Permissões
+init_daemon_domain(birthday_server);                        # O daemon será iniciado pelo init
+# vndbinder_use(birthday_server);                             # O daemon usará o binder
+binder_use(birthday_server);                             # O daemon usará o binder
+allow birthday_server servicemanager:binder { call transfer };
+
+add_service(birthday_server, birthdayservice)             # O daemon irá criar o serviço do smart_ir
+
+# Permite acesso aos arquivos do /sys
+allow birthday_server sysfs:file { getattr open read write };
+
+# Cria e Permite leitura da propriedades de sistema do smart_ir
+vendor_public_prop(vendor_smart_ir_prop)
+allow birthday_server vendor_smart_ir_prop:file { open getattr map read };
+
+# Permite que apps privilegiados acessem o daemon e o serviço
+allow platform_app birthday_server:binder call;
+allow platform_app birthdayservice:service_manager find;
+
+# Permite que apps normais acessem o daemon e o serviço
+allow untrusted_app birthday_server:binder call;
+allow untrusted_app birthdayservice:service_manager find;
+# Linha em branco para evitar erro de compilação
+        

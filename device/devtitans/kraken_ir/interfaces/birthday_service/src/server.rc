@@ -1,0 +1,5 @@
+service birthday_server /bin/hw/birthday_server
+    interface aidl com.example.birthdayservice.IBirthdayService
+    class hal
+    user root
+    group root

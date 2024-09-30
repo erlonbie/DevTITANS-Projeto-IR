@@ -1,0 +1,15 @@
+aidl_interface {
+    name:      "devtitans.smartir",
+    srcs:      [ "devtitans/smart_ir/*.aidl" ],
+    unstable: true,
+    owner:     "DevTITANS",
+
+    backend: {
+        rust: {
+            enabled: true,
+        },
+        ndk: {
+            enabled: true,
+        },
+    },
+}
