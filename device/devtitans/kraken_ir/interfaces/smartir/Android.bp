@@ -1,0 +1,19 @@
+aidl_interface {
+    name:      "devtitans.smartir",
+    vendor:    true,
+    srcs:      [ "devtitans/smartir/*.aidl" ],
+    stability: "vintf",
+    owner:     "DevTITANS",
+
+    backend: {
+        cpp: {
+            enabled: true,
+        },
+        java: {
+            enabled: true,
+            sdk_version: "module_current",
+        },        ndk: {
+            enabled: true,
+        },
+    },
+}

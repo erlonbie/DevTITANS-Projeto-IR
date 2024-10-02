@@ -1,0 +1,4 @@
+# Define o rótulo do daemon smartir
+/vendor/bin/hw/devtitans.smartir-service  u:object_r:smartir_daemon_exec:s0
+# Linha em branco para evitar erro de compilação
+

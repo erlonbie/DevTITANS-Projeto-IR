@@ -1,0 +1,4 @@
+# Define o rótulo do serviço AIDL smartir
+devtitans.smartir.ISmartIR/default  u:object_r:smartir_service:s0
+# Linha em branco para evitar erro de compilação
+
