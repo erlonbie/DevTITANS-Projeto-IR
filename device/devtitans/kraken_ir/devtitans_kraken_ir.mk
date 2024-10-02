@@ -11,3 +11,14 @@ PRODUCT_PACKAGES += \
 	logging_test \
 	smart_ir_lib \
 	smart_ir_client
+
+BOARD_SEPOLICY_DIRS += device/devtitans/kraken_ir/sepolicy
+
+# Smartir AIDL Interface
+PRODUCT_PACKAGES += devtitans.smartir
+
+# Smartir Binder Service
+PRODUCT_PACKAGES += devtitans.smartir-service
+
+# Device Framework Matrix (Declara que o nosso produto Kraken precisa do serviço smartir)
+DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := device/devtitans/kraken_ir/device_framework_matrix.xml

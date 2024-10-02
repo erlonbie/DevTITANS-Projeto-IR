@@ -1,0 +1,21 @@
+cc_binary {
+    name:                  "devtitans.smartir-service",
+    relative_install_path: "hw",                           // HALs ficam armazenados dentro do subdiretório hw do bin
+    init_rc:               ["smartir-default.rc"],       // Usado pelo init para iniciar o serviço
+    vintf_fragments:       ["smartir-default.xml"],      // Este módulo "provê" o serviço smartir
+    vendor:                true,
+
+    shared_libs: [
+        "libbase",                                         // Contém o logging e centenas de métodos convenientes (usamos só o logging)
+        "libbinder_ndk",                                   // Biblioteca do binder usada na criação de HALs
+        "smart_ir_lib",                                   // Biblioteca do smartir criada anteriormente
+        "devtitans.smartir-V1-ndk",             // Biblioteca criada automaticamente pelo AIDL do smartir
+    ],
+
+    srcs: [
+        "smartir_service.cpp",
+        "main.cpp"
+    ],
+
+    required: [ "smart_ir_lib" ],
+}

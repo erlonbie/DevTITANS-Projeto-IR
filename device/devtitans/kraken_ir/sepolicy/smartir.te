@@ -1,0 +1,30 @@
+# Cria o tipo/rótulo do serviço AIDL (rotulado no arquivo service_contexts)
+type smartir_service, service_manager_type;
+
+# Cria o tipo/rótulo do daemon (rotulado no arquivo file_contexts)
+type smartir_daemon, domain;
+type smartir_daemon_exec, exec_type, vendor_file_type, file_type;
+
+# Permissões
+init_daemon_domain(smartir_daemon);                        # O daemon será iniciado pelo init
+vndbinder_use(smartir_daemon);                             # O daemon usará o binder
+allow smartir_daemon servicemanager:binder { call transfer };
+
+add_service(smartir_daemon, smartir_service)             # O daemon irá criar o serviço do smartir
+
+# Permite acesso aos arquivos do /sys
+allow smartir_daemon sysfs:file { getattr open read write };
+
+# Cria e Permite leitura da propriedades de sistema do smartir
+vendor_public_prop(vendor_smartir_prop)
+allow smartir_daemon vendor_smartir_prop:file { open getattr map read };
+
+# Permite que apps privilegiados acessem o daemon e o serviço
+allow platform_app smartir_daemon:binder call;
+allow platform_app smartir_service:service_manager find;
+
+# Permite que apps normais acessem o daemon e o serviço
+allow untrusted_app smartir_daemon:binder call;
+allow untrusted_app smartir_service:service_manager find;
+# Linha em branco para evitar erro de compilação
+        

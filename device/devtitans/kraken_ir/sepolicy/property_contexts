@@ -1,0 +1,4 @@
+# Define o rótulo da propriedade de sistema
+vendor.devtitans.smartir.allow_simulated  u:object_r:vendor_smartir_prop:s0
+# Linha em branco para evitar erro de compilação
+
