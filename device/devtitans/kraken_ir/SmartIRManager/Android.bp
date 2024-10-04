@@ -1,0 +1,21 @@
+java_library {
+    name: "devtitans.smartirmanager",
+
+    srcs: [ "src/**/*.java" ],
+
+    static_libs: [ "devtitans.smartir-V1-java" ],      // Usa a biblioteca gerada pelo AIDL
+    required:    [ "devtitans.smartirmanager.xml" ],   // Requer o arquivo de permissão (abaixo)
+
+    system_ext_specific: true,                           // O App será instalado na partição system_ext
+    platform_apis:       true,                           // Permite usar APIs escondidas ("@hide")
+    installable:         true,                           // Copia a biblioteca para a imagem do Android
+}
+
+// Copia o arquivo de permissão para o system_ext/etc/permissions
+prebuilt_etc {
+    name: "devtitans.smartirmanager.xml",
+    src:  "devtitans.smartirmanager.xml",
+    filename_from_src:     true,
+    relative_install_path: "permissions",
+    system_ext_specific:   true,
+}
