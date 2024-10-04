@@ -37,4 +37,5 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation files('/home/erlonbie/aosp/out/soong/.intermediates/device/devtitans/kraken_ir/interfaces/smartir/devtitans.smartir-V1-java/android_common/javac/devtitans.smartir-V1-java.jar')
+    implementation files('/home/erlonbie/aosp/out/soong/.intermediates/device/devtitans/kraken_ir/SmartIRManager/devtitans.smartirmanager/android_common/javac/devtitans.smartirmanager.jar')
 }

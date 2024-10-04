@@ -13,6 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartlampTestApp"
         tools:targetApi="31">
+        <uses-library android:name="devtitans.smartirmanager" android:required="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
