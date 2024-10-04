@@ -25,3 +25,6 @@ PRODUCT_PACKAGES += devtitans.smartir-service
 
 # Device Framework Matrix (Declara que o nosso produto Kraken precisa do serviço smartir)
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := device/devtitans/kraken_ir/device_framework_matrix.xml
+
+# Manager
+PRODUCT_PACKAGES += devtitans.smartirmanager
