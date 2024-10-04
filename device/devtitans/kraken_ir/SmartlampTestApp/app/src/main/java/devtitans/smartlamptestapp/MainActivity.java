@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         textLuminosity = findViewById(R.id.textLuminosity);
         editLed =        findViewById(R.id.editLed);
 
-        binder = ServiceManager.getService("devtitans.smartir.IsmartIR/default"); // Acessa e consulta o binder
+        binder = ServiceManager.getService("devtitans.smartir.ISmartIR/default"); // Acessa e consulta o binder
         if (binder != null) {
             service = ISmartIR.Stub.asInterface(binder);                   // Acessa o serviço smartir
             if (service != null)
