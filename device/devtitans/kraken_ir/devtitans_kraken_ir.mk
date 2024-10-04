@@ -15,6 +15,9 @@ PRODUCT_PACKAGES += \
 # App Privilegiado de Teste do Serviço Smartlamp
 PRODUCT_PACKAGES += SmartlampTestApp
 
+# App Privilegiado de Teste do Serviço SmartIR
+PRODUCT_PACKAGES += IRApp
+
 BOARD_SEPOLICY_DIRS += device/devtitans/kraken_ir/sepolicy
 
 # Smartir AIDL Interface

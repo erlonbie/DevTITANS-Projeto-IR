@@ -17,10 +17,18 @@ import com.wax.irapp.database.IRCommandDatabase
 import com.wax.irapp.databinding.ActivityMainBinding
 import com.wax.irapp.models.IRCommand
 
+import android.os.ServiceManager;
+import android.os.IBinder;
+import android.os.RemoteException;
+
+import devtitans.smartir.ISmartIR;
+
 class MainActivity : AppCompatActivity(), IRCommandAdapter.IRCommandClickListener, PopupMenu.OnMenuItemClickListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var database: IRCommandDatabase
+    private lateinit var IBinder binder;
+    private lateinit var ISmartIR service;
     lateinit var viewModel: IRCommandViewModel
     lateinit var adapter: IRCommandAdapter
     lateinit var selectedIRCommand: IRCommand
