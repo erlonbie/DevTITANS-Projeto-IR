@@ -3,15 +3,19 @@ package com.wax.irapp
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.wax.irapp.databinding.ActivityAddIrCommandBinding
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+//import com.wax.irapp.databinding.ActivityAddIrCommandBinding
 import com.wax.irapp.models.IRCommand
 import java.text.SimpleDateFormat
 import java.util.Date
 
 class AddIRCommandActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityAddIrCommandBinding
+    //private lateinit var binding: ActivityAddIrCommandBinding
 
     private lateinit var iRCommand: IRCommand
     private lateinit var oldIRCommand: IRCommand
@@ -19,23 +23,26 @@ class AddIRCommandActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityAddIrCommandBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        binding.loadingSpinner.visibility = android.view.View.VISIBLE
-        binding.tvCommandRegistered.visibility = android.view.View.GONE
+        setContentView(R.layout.activity_add_ir_command)
+        val loadingSpinner : ProgressBar = findViewById(R.id.loading_spinner)
+        loadingSpinner.visibility = android.view.View.VISIBLE
+        val tvCommandRegistered : TextView = findViewById(R.id.tv_command_registered)
+        tvCommandRegistered.visibility = android.view.View.GONE
 
+        val etTilte : TextView = findViewById(R.id.et_tilte)
         try {
             oldIRCommand = intent.getSerializableExtra("current_command") as IRCommand
-            binding.etTilte.setText(oldIRCommand.title)
-            binding.loadingSpinner.visibility = android.view.View.GONE
-            binding.tvCommandRegistered.visibility = android.view.View.VISIBLE
+            etTilte.setText(oldIRCommand.title)
+            loadingSpinner.visibility = android.view.View.GONE
+            tvCommandRegistered.visibility = android.view.View.VISIBLE
             isUpdate = true
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
-        binding.imgCheck.setOnClickListener {
-            val title = binding.etTilte.text.toString()
+        val imgCheck : ImageView = findViewById(R.id.img_check)
+        imgCheck.setOnClickListener {
+            val title = etTilte.text.toString()
 
             if (title.isNotEmpty()) {
                 val formatter = SimpleDateFormat("EEE, d MMM yyyy HH:mm a")
@@ -64,7 +71,8 @@ class AddIRCommandActivity : AppCompatActivity() {
             }
         }
 
-        binding.imgBackArrow.setOnClickListener {
+        val imgBackArrow : ImageView = findViewById(R.id.img_back_arrow)
+        imgBackArrow.setOnClickListener {
             onBackPressed()
         }
     }

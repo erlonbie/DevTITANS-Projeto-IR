@@ -13,7 +13,10 @@ PRODUCT_PACKAGES += \
 	smart_ir_client
 
 # App Privilegiado de Teste do Serviço Smartlamp
-PRODUCT_PACKAGES += SmartlampTestApp
+# PRODUCT_PACKAGES += SmartlampTestApp
+
+# App Privilegiado de Teste do Serviço SmartIR
+PRODUCT_PACKAGES += IRApp
 
 BOARD_SEPOLICY_DIRS += device/devtitans/kraken_ir/sepolicy
 
