@@ -2,6 +2,7 @@ package com.wax.irapp.adapter
 
 import android.content.Context
 import android.provider.CalendarContract.Colors
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,10 +17,15 @@ import com.wax.irapp.models.IRCommand
 
 class IRCommandAdapter(private val context: Context, val listener : IRCommandClickListener) : RecyclerView.Adapter<IRCommandAdapter.IRCommandViewHolder>() {
 
+    companion object {
+        private const val TAG = "KrakenIR.IRCommandAdapter"
+    }
+
     private val irCommandList = ArrayList<IRCommand>()
     private val fullList = ArrayList<IRCommand>()
 
     override fun onCreateViewHolder(parent: ViewGroup,viewType: Int): IRCommandViewHolder {
+        Log.d(TAG, "Creating view holder.")
         return IRCommandViewHolder(
             LayoutInflater.from(context).inflate(R.layout.list_item, parent, false)
         )
@@ -28,6 +34,9 @@ class IRCommandAdapter(private val context: Context, val listener : IRCommandCli
     override fun onBindViewHolder(holder: IRCommandViewHolder, position: Int) {
 
         val currentIRCommand = irCommandList[position]
+
+        Log.d(TAG, "Binding view holder for command: ${currentIRCommand.title}")
+
         holder.title.text = currentIRCommand.title
         holder.title.isSelected = true
 
@@ -53,6 +62,7 @@ class IRCommandAdapter(private val context: Context, val listener : IRCommandCli
     }
 
     fun updateList(newList : List<IRCommand>){
+        Log.d(TAG, "Updating command list with ${newList.size} items.")
 
         fullList.clear()
         fullList.addAll(newList)
