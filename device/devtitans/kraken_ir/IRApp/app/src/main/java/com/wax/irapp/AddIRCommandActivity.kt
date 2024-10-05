@@ -3,6 +3,7 @@ package com.wax.irapp
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -15,6 +16,11 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 class AddIRCommandActivity : AppCompatActivity() {
+
+    companion object {
+        private const val TAG = "KrakenIR.AddIRCommandActivity"
+    }
+
     //private lateinit var binding: ActivityAddIrCommandBinding
 
     private lateinit var iRCommand: IRCommand
@@ -23,45 +29,58 @@ class AddIRCommandActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate called, initializing UI.")
         setContentView(R.layout.activity_add_ir_command)
-        val loadingSpinner : ProgressBar = findViewById(R.id.loading_spinner)
-        loadingSpinner.visibility = android.view.View.VISIBLE
-        val tvCommandRegistered : TextView = findViewById(R.id.tv_command_registered)
-        tvCommandRegistered.visibility = android.view.View.GONE
 
-        val etTilte : TextView = findViewById(R.id.et_tilte)
+        val loadingSpinner: ProgressBar = findViewById(R.id.loading_spinner)
+        loadingSpinner.visibility = android.view.View.VISIBLE
+        Log.d(TAG, "Loading spinner set to visible.")
+
+        val tvCommandRegistered: TextView = findViewById(R.id.tv_command_registered)
+        tvCommandRegistered.visibility = android.view.View.GONE
+        Log.d(TAG, "Text view for command registration hidden.")
+
+        val etTitle : TextView = findViewById(R.id.et_tilte)
         try {
             oldIRCommand = intent.getSerializableExtra("current_command") as IRCommand
-            etTilte.setText(oldIRCommand.title)
+            etTitle.setText(oldIRCommand.title)
+            Log.d(TAG, "Updating existing command: ${oldIRCommand.title}")
             loadingSpinner.visibility = android.view.View.GONE
             tvCommandRegistered.visibility = android.view.View.VISIBLE
             isUpdate = true
         } catch (e: Exception) {
+            Log.e(TAG, "No existing command found. Exception: ${e.message}")
             e.printStackTrace()
         }
 
-        val imgCheck : ImageView = findViewById(R.id.img_check)
+        val imgCheck: ImageView = findViewById(R.id.img_check)
         imgCheck.setOnClickListener {
-            val title = etTilte.text.toString()
+            val title = etTitle.text.toString()
+            Log.d(TAG, "Check button clicked, title: $title")
 
             if (title.isNotEmpty()) {
                 val formatter = SimpleDateFormat("EEE, d MMM yyyy HH:mm a")
+                val formattedDate = formatter.format(Date())
 
                 if (isUpdate) {
                     iRCommand = IRCommand(
-                        oldIRCommand.id, title, code = "123", formatter.format(Date())
+                        oldIRCommand.id, title, code = "123", formattedDate
                     )
+                    Log.d(TAG, "Command updated: $title, date: $formattedDate")
                 } else {
                     iRCommand = IRCommand(
-                        null, title, code = "123", formatter.format(Date())
+                        null, title, code = "123", formattedDate
                     )
+                    Log.d(TAG, "New command created: $title, date: $formattedDate")
                 }
 
                 val intent = Intent()
                 intent.putExtra("command", iRCommand)
                 setResult(Activity.RESULT_OK, intent)
+                Log.d(TAG, "Command set in result intent, finishing activity.")
                 finish()
             } else {
+                Log.d(TAG, "Title is empty, showing Toast message.")
                 Toast.makeText(
                     this@AddIRCommandActivity,
                     "Please enter some data",
@@ -73,6 +92,7 @@ class AddIRCommandActivity : AppCompatActivity() {
 
         val imgBackArrow : ImageView = findViewById(R.id.img_back_arrow)
         imgBackArrow.setOnClickListener {
+            Log.d(TAG, "Back arrow clicked, calling onBackPressed.")
             onBackPressed()
         }
     }
