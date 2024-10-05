@@ -14,21 +14,23 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.wax.irapp.adapter.IRCommandAdapter
 import com.wax.irapp.database.IRCommandDatabase
-import com.wax.irapp.databinding.ActivityMainBinding
+//import com.wax.irapp.databinding.ActivityMainBinding
 import com.wax.irapp.models.IRCommand
 
 import android.os.ServiceManager;
 import android.os.IBinder;
 import android.os.RemoteException;
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 import devtitans.smartir.ISmartIR;
 
 class MainActivity : AppCompatActivity(), IRCommandAdapter.IRCommandClickListener, PopupMenu.OnMenuItemClickListener {
 
-    private lateinit var binding: ActivityMainBinding
+    //private lateinit var binding: ActivityMainBinding
     private lateinit var database: IRCommandDatabase
-    private lateinit var IBinder binder;
-    private lateinit var ISmartIR service;
+    private lateinit var  binder: IBinder;
+    private lateinit var  service: ISmartIR;
     lateinit var viewModel: IRCommandViewModel
     lateinit var adapter: IRCommandAdapter
     lateinit var selectedIRCommand: IRCommand
@@ -46,8 +48,7 @@ class MainActivity : AppCompatActivity(), IRCommandAdapter.IRCommandClickListene
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_main)
 
         //Initialize the UI
         initUI()
@@ -67,10 +68,12 @@ class MainActivity : AppCompatActivity(), IRCommandAdapter.IRCommandClickListene
     }
 
     private fun initUI() {
-        binding.recyclerView.setHasFixedSize(true)
-        binding.recyclerView.layoutManager = StaggeredGridLayoutManager(3, LinearLayout.VERTICAL)
+        val recyclerViewVar : RecyclerView = findViewById(R.id.recycler_view)
+
+        recyclerViewVar.setHasFixedSize(true)
+        recyclerViewVar.layoutManager = StaggeredGridLayoutManager(3, LinearLayout.VERTICAL)
         adapter = IRCommandAdapter(this,this)
-        binding.recyclerView.adapter = adapter
+        recyclerViewVar.adapter = adapter
 
         val getContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
             if (result.resultCode == Activity.RESULT_OK){
@@ -81,13 +84,14 @@ class MainActivity : AppCompatActivity(), IRCommandAdapter.IRCommandClickListene
                 }
             }
         }
-
-        binding.fbAddNote.setOnClickListener {
+        val fbAddNote : FloatingActionButton = findViewById(R.id.fb_add_note)
+        fbAddNote.setOnClickListener {
             val intent = Intent(this, AddIRCommandActivity::class.java)
             getContent.launch(intent)
         }
 
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        val searchView : SearchView = findViewById(R.id.searchView)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(p0: String?): Boolean {
                 return false
             }

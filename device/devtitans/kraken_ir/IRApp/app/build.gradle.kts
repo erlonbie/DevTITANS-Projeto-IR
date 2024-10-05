@@ -18,10 +18,9 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildFeatures{
-        viewBinding = true
-        dataBinding = true
-    }
+//    buildFeatures{
+//        viewBinding = true
+//    }
 
     buildTypes {
         release {
@@ -61,5 +60,4 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     implementation(files("/home/erlonbie/aosp/out/soong/.intermediates/device/devtitans/kraken_ir/interfaces/smartir/devtitans.smartir-V1-java/android_common/javac/devtitans.smartir-V1-java.jar"))
-    implementation(files("/home/erlonbie/.gradle/caches/modules-2/files-2.1/androidx.databinding/viewbinding/8.5.1/2e953018e3dff4124e267f047320a0c58304af59/viewbinding-8.5.1-sources.jar"))
 }
