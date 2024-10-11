@@ -1,11 +1,11 @@
 #include <Arduino.h>
 #include <IRremote.hpp>
-// #include "PinDefinitionsAndMore.h" // Set IR_SEND_PIN for different CPU's
+// #include "PinDefinitionsAndMore.h"
 
 #include "TinyIRSender.hpp"
 #define DECODE_NEC
 #define IR_SEND_PIN 23
-#define IR_RECEIVE_PIN 19
+#define IR_RECEIVE_PIN 21
 #define LED_BUILTIN 2
 
 void setup() {
@@ -43,11 +43,34 @@ void processCommand(String command) {
     command.toUpperCase();
 
     if (command.startsWith("SEND_CODE ")) {
-        String hexCode = command.substring(10);
-        long hexValue = strtol(hexCode.c_str(), NULL, 16);
+
+        command = command.substring(10);
+        
+        // Dividir a mensagem usando o delimitador "_"
+        int firstSeparatorIndex = command.indexOf('_');
+        int secondSeparatorIndex = command.lastIndexOf('_');
+
+        // Separar protocolo, endereço e comando
+        String protocolo = command.substring(0, firstSeparatorIndex);
+        String endereco = command.substring(firstSeparatorIndex + 1, secondSeparatorIndex);
+        String comando = command.substring(secondSeparatorIndex + 1);
+
+        // Exibir os resultados
+        Serial.println("Protocolo: " + protocolo);
+        Serial.println("Endereço: " + endereco);
+        Serial.println("Comando: " + comando);
+
+        long hexAddress = strtol(endereco.c_str(), NULL, 16);
+        long hexCommand = strtol(comando.c_str(), NULL, 16);
         Serial.print("Enviando código IR: ");
-        Serial.println(hexValue);
-        sendExtendedNEC(IR_SEND_PIN, 0x0, hexValue, 0);
+        Serial.println(hexAddress);
+        Serial.println(hexCommand);
+
+        if (protocolo == "NEC") {
+          sendExtendedNEC(IR_SEND_PIN, hexAddress, hexCommand, 2);
+        } else {
+          Serial.println("Protocolo desconhecido");
+        }
     }
 
     else if (command == "GET_CODE") {
@@ -69,7 +92,7 @@ void processCommand(String command) {
         Serial.println();
         }
     }
-
+    
     else
       Serial.println("ERR Unknown command.");
       
