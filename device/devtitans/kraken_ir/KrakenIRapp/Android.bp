@@ -1,0 +1,27 @@
+android_app {
+    name: "KrakenIRapp",
+
+    srcs:          [ "app/src/**/*.java" ],
+    resource_dirs: [ "app/src/main/res" ],
+    static_libs:   [
+        "devtitans.smartir-V1-java",                   // Biblioteca do Smartlamp AIDL
+        "androidx.core_core-ktx",
+        "androidx.appcompat_appcompat",
+        "com.google.android.material_material",
+        "androidx-constraintlayout_constraintlayout",
+        "androidx.activity_activity",
+        "androidx.room_room-runtime",
+        "androidx.lifecycle_lifecycle-viewmodel-ktx",
+        "androidx.lifecycle_lifecycle-runtime-ktx",
+        "androidx.test.ext.junit",
+        "androidx.test.espresso.core",
+    ],
+    
+    plugins: ["androidx.room_room-compiler-plugin"],
+
+    system_ext_specific: true,                           // O App será instalado na partição system_ext
+    platform_apis:       true,                           // Permite usar APIs escondidas ("@hide")
+    certificate:         "platform",                     // Necessário para uma aplicação do sistema
+    use_embedded_native_libs: true,
+    manifest: "app/src/main/AndroidManifest.xml",
+}
