@@ -23,7 +23,7 @@ static uint usb_in, usb_out;  // USB I/O ports address.
 static char *usb_in_buffer, *usb_out_buffer;  // USB I/O Buffer
 static int usb_max_size;  // Max USB message size
 
-// Var to create /sys/kernel/smartlamp/{ir_transmit, ir_receive} files
+// Var to create /sys/kernel/smart_ir/{ir_transmit, ir_receive} files
 static struct kobj_attribute  ir_transmit_attribute = __ATTR(ir_transmit, S_IRUGO | S_IWUSR, attr_show, attr_store);
 static struct kobj_attribute  ir_receive_attribute = __ATTR(ir_receive, S_IRUGO | S_IWUSR, attr_show, attr_store);
 
@@ -87,6 +87,8 @@ static int usb_send_cmd(char *cmd, int param) {
     char resp_expected[MAX_RECV_LINE];      // Expected response for given command
     char *resp_pos;                         // Response value index in response line
     long resp_number = -1;                  // Frequency value returned by device
+    int i_2 = 0;
+    char meu_bufferbuffer[MAX_RECV_LINE];
 
     printk(KERN_INFO "[SmartIR] Command sent: %s\n", cmd);
 
@@ -94,7 +96,9 @@ static int usb_send_cmd(char *cmd, int param) {
     else sprintf(usb_out_buffer, "%s\n", cmd);                      // Else, its command only
 
     // Sends command (usb_out_buffer) to USB
-    ret = usb_bulk_msg(smart_ir_device, usb_sndbulkpipe(smart_ir_device, usb_out), usb_out_buffer, strlen(usb_out_buffer), &actual_size, 1000*HZ);
+    ret = usb_bulk_msg(smart_ir_device, usb_sndbulkpipe(smart_ir_device, usb_out), usb_out_buffer, strlen(usb_out_buffer), &actual_size, 1000);
+    printk(KERN_INFO "ACTUAL SIZE 1: %d", actual_size);
+    printk(KERN_INFO "USB_OUT_BUFFER: %s", usb_out_buffer);
     if (ret) {
         printk(KERN_ERR "[SmartIR] Error while sending command. Exit code: %d\n", ret);
         return -1;
@@ -105,7 +109,14 @@ static int usb_send_cmd(char *cmd, int param) {
     // Awaits for correct response (Gives up after <retries variable> times)
     while (retries > 0) {
         // Read data from USB
-        ret = usb_bulk_msg(smart_ir_device, usb_rcvbulkpipe(smart_ir_device, usb_in), usb_in_buffer, min(usb_max_size, MAX_RECV_LINE), &actual_size, HZ*1000);
+        ret = usb_bulk_msg(smart_ir_device, usb_rcvbulkpipe(smart_ir_device, usb_in), usb_in_buffer, min(usb_max_size, MAX_RECV_LINE), &actual_size, 1000);
+        printk(KERN_INFO "ACTUAL SIZE 2: %d", actual_size);
+        printk(KERN_INFO "USB_IN_BUFFER: %s", usb_in_buffer);
+        for(i = 0; i < actual_size; i++) {
+          printk(KERN_INFO "%c", usb_in_buffer[i]);
+          meu_bufferbuffer[i_2] = usb_in_buffer[i];
+          i_2++;
+        }
         if (ret) {
             printk(KERN_ERR "[SmartIR] Error while reading from USB (attempt %d). Exit code: %d\n", retries--, ret);
             continue;
