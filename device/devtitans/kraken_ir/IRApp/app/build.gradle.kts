@@ -59,5 +59,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.kotlinx.coroutines.android)
 
+    ksp("androidx.room:room-compiler:2.5.2")
     implementation(files("/home/erlonbie/aosp/out/soong/.intermediates/device/devtitans/kraken_ir/interfaces/smartir/devtitans.smartir-V1-java/android_common/javac/devtitans.smartir-V1-java.jar"))
 }
