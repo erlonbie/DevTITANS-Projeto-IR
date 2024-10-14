@@ -21,6 +21,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        customDebugType {
+            debuggable true
+        }
+
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -42,6 +46,11 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    implementation libs.room.runtime
-    annotationProcessor "androidx.room:room-compiler:$room_version"
+//    implementation libs.room.runtime
+    implementation "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-runtime:$room_version"
+//    annotationProcessor "androidx.room:room-compiler:$room_version"
+    annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
+    implementation files('/home/erlonbie/aosp/out/soong/.intermediates/device/devtitans/kraken_ir/interfaces/smartir/devtitans.smartir-V1-java/android_common/javac/devtitans.smartir-V1-java.jar')
+    implementation files('/home/erlonbie/aosp/out/soong/.intermediates/device/devtitans/kraken_ir/SmartIRManager/devtitans.smartirmanager/android_common/javac/devtitans.smartirmanager.jar')
 }

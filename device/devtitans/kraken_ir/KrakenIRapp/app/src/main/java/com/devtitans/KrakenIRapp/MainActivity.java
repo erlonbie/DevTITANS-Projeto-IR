@@ -22,6 +22,8 @@ import com.devtitans.KrakenIRapp.database.IRCommandDatabase;
 import com.devtitans.KrakenIRapp.models.IRCommand;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+// import devtitans.smartirmanager.SmartIRManager; // Biblioteca do Manager
+
 public class MainActivity extends AppCompatActivity implements IRCommandAdapter.IRCommandClickListener,
         PopupMenu.OnMenuItemClickListener {
 
