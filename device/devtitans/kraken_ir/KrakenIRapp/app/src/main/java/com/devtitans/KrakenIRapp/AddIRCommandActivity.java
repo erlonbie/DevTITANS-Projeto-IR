@@ -65,10 +65,10 @@ public class AddIRCommandActivity extends AppCompatActivity {
                 String formattedDate = formatter.format(new Date());
 
                 if (isUpdate) {
-                    iRCommand = new IRCommand(oldIRCommand.getId(), title, "123", formattedDate);
+                    iRCommand = new IRCommand(oldIRCommand.getId(), title, 1, formattedDate);
                     Log.d(TAG, "Command updated: " + title + ", date: " + formattedDate);
                 } else {
-                    iRCommand = new IRCommand(null, title, "123", formattedDate);
+                    iRCommand = new IRCommand(null, title, 1, formattedDate);
                     Log.d(TAG, "New command created: " + title + ", date: " + formattedDate);
                 }
 

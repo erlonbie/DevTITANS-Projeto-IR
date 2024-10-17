@@ -16,13 +16,13 @@ public class IRCommand implements Serializable {
     private String title;
 
     @ColumnInfo(name = "code")
-    private String code;
+    private int code;
 
     @ColumnInfo(name = "date")
     private String date;
 
     // Construtor
-    public IRCommand(Integer id, String title, String code, String date) {
+    public IRCommand(Integer id, String title, int code, String date) {
         this.id = id;
         this.title = title;
         this.code = code;
@@ -46,11 +46,11 @@ public class IRCommand implements Serializable {
         this.title = title;
     }
 
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(int code) {
         this.code = code;
     }
 

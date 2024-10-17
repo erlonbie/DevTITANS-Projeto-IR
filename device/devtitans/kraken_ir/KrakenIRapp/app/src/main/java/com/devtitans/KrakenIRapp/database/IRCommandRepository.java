@@ -19,6 +19,20 @@ public class IRCommandRepository {
         this.irCommandDAO = irCommandDAO;
         this.allCommands = irCommandDAO.getAllNotes();
         this.executorService = Executors.newSingleThreadExecutor();
+
+        insertPredefinedCommands();
+    }
+
+    private void insertPredefinedCommands() {
+        IRCommand command1 = new IRCommand(null, "Ligar TV", 1, "2024-10-17");
+        IRCommand command2 = new IRCommand(null, "Desligar TV", 2, "2024-10-17");
+        IRCommand command3 = new IRCommand(null, "Aumentar Volume", 3, "2024-10-17");
+
+        executorService.execute(() -> {
+            irCommandDAO.insert(command1);
+            irCommandDAO.insert(command2);
+            irCommandDAO.insert(command3);
+        });
     }
 
     public LiveData<List<IRCommand>> getAllCommands() {

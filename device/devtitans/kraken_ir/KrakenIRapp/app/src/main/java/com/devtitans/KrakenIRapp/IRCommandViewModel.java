@@ -30,9 +30,9 @@ public class IRCommandViewModel extends AndroidViewModel {
         // Initialize test commands
         commandsTest = new MutableLiveData<>();
         List<IRCommand> initialCommands = new ArrayList<>();
-        initialCommands.add(new IRCommand(1, "Command 1", "Code 1", ""));
-        initialCommands.add(new IRCommand(2, "Command 2", "Code 2", ""));
-        initialCommands.add(new IRCommand(3, "Command 3", "Code 3", ""));
+        initialCommands.add(new IRCommand(1, "Command 1", 1, ""));
+        initialCommands.add(new IRCommand(2, "Command 2", 1, ""));
+        initialCommands.add(new IRCommand(3, "Command 3", 1, ""));
         commandsTest.setValue(initialCommands);
     }
 

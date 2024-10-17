@@ -24,5 +24,5 @@ public interface IRCommandDAO {
     LiveData<List<IRCommand>> getAllNotes();
 
     @Query("UPDATE ir_command_table SET title = :title, code = :code WHERE id = :id")
-    void update(Integer id, String title, String code);
+    void update(Integer id, String title, int code);
 }
