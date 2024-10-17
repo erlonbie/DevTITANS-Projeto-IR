@@ -15,8 +15,8 @@ PRODUCT_PACKAGES += \
 # App Privilegiado de Teste do Serviço Smartlamp
 # PRODUCT_PACKAGES += SmartlampTestApp
 
-# App Privilegiado de Teste do Serviço SmartIR
-PRODUCT_PACKAGES += IRApp
+# # App Privilegiado de Teste do Serviço SmartIR
+# PRODUCT_PACKAGES += IRApp
 
 # App Privilegiado de Teste do Serviço SmartIR
 PRODUCT_PACKAGES += KrakenIRapp 

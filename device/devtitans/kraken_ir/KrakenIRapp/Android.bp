@@ -5,6 +5,7 @@ android_app {
     resource_dirs: [ "app/src/main/res" ],
     static_libs:   [
         "devtitans.smartir-V1-java",                   // Biblioteca do Smartlamp AIDL
+        "devtitans.smartirmanager",                   // Biblioteca do Smartlamp AIDL
         "androidx.core_core-ktx",
         "androidx.appcompat_appcompat",
         "com.google.android.material_material",

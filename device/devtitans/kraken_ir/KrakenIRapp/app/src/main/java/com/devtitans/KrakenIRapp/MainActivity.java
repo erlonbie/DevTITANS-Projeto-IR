@@ -22,7 +22,7 @@ import com.devtitans.KrakenIRapp.database.IRCommandDatabase;
 import com.devtitans.KrakenIRapp.models.IRCommand;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-// import devtitans.smartirmanager.SmartIRManager; // Biblioteca do Manager
+import devtitans.smartirmanager.SmartIRManager; // Biblioteca do Manager
 
 public class MainActivity extends AppCompatActivity implements IRCommandAdapter.IRCommandClickListener,
         PopupMenu.OnMenuItemClickListener {
@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements IRCommandAdapter.
     private IRCommandViewModel viewModel;
     private IRCommandAdapter adapter;
     private IRCommand selectedIRCommand;
+    private SmartIRManager manager; // Atributo para o manager
 
     private final ActivityResultLauncher<Intent> updateIRCommand = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements IRCommandAdapter.
         // Initialize the UI
         initUI();
         viewModel = new ViewModelProvider(this).get(IRCommandViewModel.class);
+        manager = SmartIRManager.getInstance();
 
         viewModel.getAllCommands().observe(this, list -> {
             Log.d(TAG, "Observed change in command list.");
