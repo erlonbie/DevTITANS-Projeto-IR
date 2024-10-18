@@ -24,7 +24,7 @@ public class IRCommandViewModel extends AndroidViewModel {
     public IRCommandViewModel(Application application) {
         super(application);
         IRCommandDatabase database = IRCommandDatabase.getDatabase(application);
-        repository = new IRCommandRepository(database.getNoteDao());
+        repository = new IRCommandRepository(database.getNoteDao(), application);
         allCommands = repository.getAllCommands();
 
         // Initialize test commands
