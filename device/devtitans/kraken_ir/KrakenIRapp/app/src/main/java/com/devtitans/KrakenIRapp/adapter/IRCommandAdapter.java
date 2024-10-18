@@ -1,6 +1,7 @@
 package com.devtitans.KrakenIRapp.adapter;
 
 import android.content.Context;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,7 +67,11 @@ public class IRCommandAdapter extends RecyclerView.Adapter<IRCommandAdapter.IRCo
         });
 
         holder.button.setOnClickListener(v -> {
-            manager.set_transmit(currentIRCommand.getCode());
+            try {
+                manager.set_transmit(currentIRCommand.getCode());
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
             Toast.makeText(context, currentIRCommand.getTitle() + " Enviado com Sucesso", Toast.LENGTH_SHORT).show();
         });
     }

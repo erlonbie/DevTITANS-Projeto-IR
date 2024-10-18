@@ -33,6 +33,7 @@ public class IRCommandViewModel extends AndroidViewModel {
         initialCommands.add(new IRCommand(1, "Command 1", 1, ""));
         initialCommands.add(new IRCommand(2, "Command 2", 1, ""));
         initialCommands.add(new IRCommand(3, "Command 3", 1, ""));
+        initialCommands.add(new IRCommand(4, "Command 4", 1, ""));
         commandsTest.setValue(initialCommands);
     }
 

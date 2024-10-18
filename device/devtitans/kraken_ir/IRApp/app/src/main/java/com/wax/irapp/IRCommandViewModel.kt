@@ -21,7 +21,8 @@ class IRCommandViewModel(application: Application) : AndroidViewModel(applicatio
         value = listOf(
             IRCommand(1, "Command 1", "Code 1", ""),
             IRCommand(2, "Command 2", "Code 2", ""),
-            IRCommand(3, "Command 3", "Code 3", "")
+            IRCommand(3, "Command 3", "Code 3", ""),
+            IRCommand(4, "Command 4", "Code 4", "")
         )
     }
 
