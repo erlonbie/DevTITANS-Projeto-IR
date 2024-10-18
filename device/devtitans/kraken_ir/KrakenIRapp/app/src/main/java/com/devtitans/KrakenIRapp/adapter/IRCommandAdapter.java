@@ -1,6 +1,7 @@
 package com.devtitans.KrakenIRapp.adapter;
 
 import android.content.Context;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.devtitans.KrakenIRapp.R;
 import com.devtitans.KrakenIRapp.models.IRCommand;
 
+import devtitans.smartirmanager.SmartIRManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +30,8 @@ public class IRCommandAdapter extends RecyclerView.Adapter<IRCommandAdapter.IRCo
     private final ArrayList<IRCommand> irCommandList = new ArrayList<>();
     private final ArrayList<IRCommand> fullList = new ArrayList<>();
 
+    private SmartIRManager manager;
+
     public IRCommandAdapter(Context context, IRCommandClickListener listener) {
         this.context = context;
         this.listener = listener;
@@ -35,6 +40,7 @@ public class IRCommandAdapter extends RecyclerView.Adapter<IRCommandAdapter.IRCo
     @Override
     public IRCommandViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Log.d(TAG, "Creating view holder.");
+        manager = SmartIRManager.getInstance();
         View view = LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
         return new IRCommandViewHolder(view);
     }
@@ -60,7 +66,14 @@ public class IRCommandAdapter extends RecyclerView.Adapter<IRCommandAdapter.IRCo
             return true;
         });
 
-        holder.button.setOnClickListener(v -> Toast.makeText(context, currentIRCommand.getTitle() + " Enviado com Sucesso", Toast.LENGTH_SHORT).show());
+        holder.button.setOnClickListener(v -> {
+            try {
+                manager.set_transmit(currentIRCommand.getCode());
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+            Toast.makeText(context, currentIRCommand.getTitle() + " Enviado com Sucesso", Toast.LENGTH_SHORT).show();
+        });
     }
 
     public void updateList(List<IRCommand> newList) {
@@ -109,6 +122,7 @@ public class IRCommandAdapter extends RecyclerView.Adapter<IRCommandAdapter.IRCo
 
     public interface IRCommandClickListener {
         void onItemClicked(IRCommand irCommand);
+
         void onLongItemClicked(IRCommand irCommand, CardView cardView);
 
         void onLongItemClicked(IRCommand irCommand, View cardView);
