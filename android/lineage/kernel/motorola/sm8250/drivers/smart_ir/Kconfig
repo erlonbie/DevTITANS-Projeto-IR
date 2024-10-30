@@ -1,0 +1,6 @@
+config SMARTIR
+ tristate "smart_ir module"
+ default m
+ depends on MODULES
+ help
+   smart_ir is a test device used in DevTITANS course.

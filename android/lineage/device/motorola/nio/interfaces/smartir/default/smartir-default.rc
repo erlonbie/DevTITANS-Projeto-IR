@@ -1,0 +1,5 @@
+service devtitans.smartir-service /vendor/bin/hw/devtitans.smartir-service
+        interface aidl devtitans.smartir.ISmartIR/default
+        class hal
+        user root
+        group root

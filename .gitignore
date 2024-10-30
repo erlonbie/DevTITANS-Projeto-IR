@@ -22,7 +22,6 @@ device/ti/
 external/
 frameworks/
 hardware/
-kernel/
 libcore/
 libnativehelper/
 out/
